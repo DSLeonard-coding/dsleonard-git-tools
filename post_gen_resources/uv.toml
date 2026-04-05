@@ -1,0 +1,2 @@
+override-dependencies = ["dsleonard-git-tools @ file:///home/osboxes/repos/dsleonard-git-tools",
+    "dsleonard-cc-rc-merge @ file:///home/osboxes/repos/dsleonard-cc-rc-merge"]

@@ -1,0 +1,3 @@
+# Dependencies.txt for dsl-py-launch
+# These will get baked into the pyproject.toml:
+qx @ git+https://github.com/DSLeonard-coding/qx.git
