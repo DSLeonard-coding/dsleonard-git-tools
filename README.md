@@ -7,6 +7,18 @@ By Douglas Leonard, Copyright 2026
 This project is licensed under the following terms:  
 MIT, attribution required  
 
+This is a toolkit for git and git remote repos.  It presently is developed primarily as libraries 
+for internal use in dsleonard-pylaunch
+and the API is not stable or gauranteed, although uv lock files, make that not a problem.
+
+It provides git_api.git()  command which takes cli arguments as a string or list
+and provides slightly enhanced output compared to subprocess.run(), particularly adding the lines[] list.
+
+It also provide git_remote_manager which can be constructed various ways including from the present
+git directory itself, and can create and provision the remote repo
+
+Direct CLI exposure of more of its features may be comming. 
+
 ### Install uv if you don't have it
 ```
 curl -LsSf https://astral.sh/uv/install.sh | sh    # or with pip:  pip install pipx; pip install uv
@@ -17,11 +29,22 @@ curl -LsSf https://astral.sh/uv/install.sh | sh    # or with pip:  pip install p
 uv tool install "git+https://github.com/DSLeonard-coding/dsleonard-git-tools.git"
 dsleonard-git-tools
 ```
-
 To use ssh (if this is a private project) use:
 ```bash
 uv tool install "git+ssh://git@github.com/DSLeonard-coding/dsleonard-git-tools.git"
 ```
+
+This is just a stub app to test the installating. 
+
+### Applets
+The ```create_new_remote``` command will create a github or gitlab repo from the remote configured
+in .git/config.  So usage should look like
+```
+git remote add origin git@github.com:namespace/repo_name
+create_new_remote
+```
+This command name is likely to change or become an option to git-dsl-tools command.  Other commands are planned for some day, like a command or option to setup ssh keys.
+
 
 If want to use libraries provided by the application...
 

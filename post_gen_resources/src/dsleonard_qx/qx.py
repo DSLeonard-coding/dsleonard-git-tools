@@ -24,7 +24,7 @@ qx(<cmd>,<optional args>):
     dbg("You are here.")         :  Prints "DEBUG: You are here." if verbosity <= DEBUG. (see others below)
                                            
     USE CASES from simplest to advanced:  
-    from qx import *  # Note: imports qx.qx to qx  
+    from dsleonard_qx import *  # Note: imports qx.qx to qx  
 
     1) Default:  
     Just use qx(<cmd>).  Commands will be run, with output available in the return value.

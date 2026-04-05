@@ -12,7 +12,7 @@ import webbrowser
 import pathlib
 import subprocess
 from dsleonard_qx import *
-from dsleonard_git_api import *
+from .git_api import *
 import sys
 import getpass
 import requests

@@ -8,7 +8,7 @@
 
 #Setup useful verbosity controls for messaging and shell command execution via qx:
 #see https://github.com/DSLeonard-coding/qx
-from qx import *  # noqa so linters won't move this # type: ignore
+from dsleonard_qx import *  # noqa so linters won't move this # type: ignore
 
 #The core file gets names in __all__ exported to top level for
 # from package.module import *

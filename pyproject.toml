@@ -24,7 +24,9 @@ classifiers = [
   "Programming Language :: Python :: 3",
 ]
 dependencies = [
-    "qx",
+    "pygithub==2.8.1",
+    "python-gitlab==8.1.0",
+    "dsleonard-qx",
 ]
 
 [project.urls]
@@ -43,6 +45,7 @@ exclude = ["test","tests"]
 
 #The left side is the installed command name.  Right side is the entry point
 [project.scripts]
+dsl-create-remote = "dsleonard_git_tools.create_new_remote:main"
 dsleonard-git-tools = "dsleonard_git_tools.core:main"
 
 
@@ -56,5 +59,5 @@ git_describe_command = "git describe --dirty --tags --long --match '*v[0-9]*'"
 tag_regex = "^(?:(?P<pre>.*)-)?v(?P<version>[0-9.]+)(?:(?P<local>[a-z]+[0-9]*))?(-(?P<post>r[0-9]+))?.*$"
 
 [tool.uv.sources]
-qx = { git = "https://github.com/DSLeonard-coding/qx.git" }
+dsleonard-qx = { git = "https://github.com/DSLeonard-coding/qx.git" }
 
