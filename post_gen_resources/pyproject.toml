@@ -1,0 +1,33 @@
+[project]
+name = "post_gen_resources"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "pygithub==2.8.1",
+    "python-gitlab==8.1.0",
+    "uv==0.10.8",
+    "setuptools",
+    "pyyaml>=6.0.3",
+#    "dsleonard-git-tools",
+#    "dsleonard-cc-rc-merge",
+]
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+# This is the "One TOML, Many Packages" magic
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.uv.sources]
+#dsleonard-git-tools = { git = "https://github.com/DSLeonard-coding/dsleonard-git-tools" }
+#dsleonard-cc-rc-merge = { git = "https://github.com/DSLeonard-coding/dsleonard-cc-rc-merge" }
+#dsleonard-git-tools = { path = "/home/osboxes/repos/dsleonard-git-tools" }
+#dsleonard-cc-rc-merge = { path = "/home/osboxes/repos/dsleonard-cc-rc-merge" }
+
+[project.scripts]
+create_new_remote = "src.dsleonard_git_remote_manager.create_new_remote:main"
+
+[tool.uv]
+override-dependencies = ["dsleonard-git-tools @ file:///home/osboxes/repos/dsleonard-git-tools",
+    "dsleonard-cc-rc-merge @ file:///home/osboxes/repos/dsleonard-cc-rc-merge"]

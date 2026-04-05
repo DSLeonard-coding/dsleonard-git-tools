@@ -1,0 +1,60 @@
+
+[build-system]
+requires = ["setuptools>=61", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dsleonard-git-tools"
+dynamic = ["version"] 
+requires-python = ">=3.10"
+description = "Tools for git and provisioning github/gitlab repos"
+readme = "README.md" 
+authors = [
+	{name = "Douglas Leonard", email = "dleonard.dev@gmail.com"}
+]
+license = { text = "MIT, attribution required"}
+classifiers = [
+  # Information for PyPi
+  # How mature is this project? Common values are
+  #   3 - Alpha
+  #   4 - Beta
+  #   5 - Production/Stable
+  "Development Status :: 3 - Alpha",
+  # Can specify more versions
+  "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "qx",
+]
+
+[project.urls]
+"Repository" = "https://github.com/DSLeonard-coding/dsleonard-git-tools"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+exclude = ["test","tests"]
+
+[tool.setuptools.package-data]
+"dsleonard_git_tools" = ["py.typed"]
+
+
+#The left side is the installed command name.  Right side is the entry point
+[project.scripts]
+dsleonard-git-tools = "dsleonard_git_tools.core:main"
+
+
+#enable scm dynamic versioning, version must be included in dynamic under project above. 
+[tool.setuptools_scm]
+write_to = "src/dsleonard_git_tools/_version.py"
+git_describe_command = "git describe --dirty --tags --long --match '*v[0-9]*'"
+#read tags like [prefix-]v1.3[.4[.5[...]]][rc0][-postfix]  only v1.3 part required
+#rc part is kept as a local metadata so v1.3rc0 satifies v1.3 in testing.
+#rc tags are not meant to be pushed to pypi.
+tag_regex = "^(?:(?P<pre>.*)-)?v(?P<version>[0-9.]+)(?:(?P<local>[a-z]+[0-9]*))?(-(?P<post>r[0-9]+))?.*$"
+
+[tool.uv.sources]
+qx = { git = "https://github.com/DSLeonard-coding/qx.git" }
+

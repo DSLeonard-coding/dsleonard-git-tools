@@ -1,0 +1,50 @@
+{
+  "project_name": "test_project",
+  "project_pkg": "Do not edit directly. Placeholder to be replaced by pre_prompt.py",
+  "description": "Test project",
+  "license": "All Rights Reserved",
+  "install_command_entry_point": true,
+  "python_version": "3.10",
+  "auto_push_new_repo": true,
+  "overwrite_repo": "no",
+  "create_wiki_page": true,
+  "make_repo_public": false,
+  "author_name": "Configure default with:  git config --global user.name \"Your Name\"",
+  "author_email": "Configure default with:  git config --global user.email \"Your email\"",
+  "repo": "github.com",
+  "repo_type": ["github","gitlab"],
+  "repo_namespace": "my_remote_namespace",
+  "_dsleonard_git_tools_path": "",
+  "_dsleonard_cc_rc_merge_path": "",
+  "_use_local_deps": false,
+
+  "__prompts__": {
+    "project_name": "Project name, ex: my-project for README title, pyproject.toml, etc",
+    "project_pkg": "Package name for python `import my_package` : Enter to accept project-derived default:",
+    "repo_slug": "git_name as in github.com/mynamespace/git_name ` : Enter to accept project-derived default:",
+    "repo": "Repo host, no 'http://' (ex: github.com)",
+  	"author_name":  "Name used in copyright, PyPi, git, etc",
+  	"author_email":  "E-mail, Used in PyPi, git, etc, cannot be empty",
+        "repo_type": "Select repo type:",
+	"repo_namespace": "Repo namespace as in my_namespace in www.github.com/my_namespace/ :",
+  	"auto_push_new_repo": "Attempt to push new git repo automatically (requires ssh keys installed):",
+  	"overwrite_repo":   "OVERWRITE REMOTE REPO?  *****DANGEROUS****, will destroy existing remote repo. \n Type YES to confirm:",
+  	"install_command_entry_point": "Yes if you are making a runnable program.  Can say no for library, but yes won't hurt:",
+  	"create_wiki_page": "Create wiki with home.md in branch wiki, and linked to main repo."
+  },
+    "_copy_without_render": [
+     ".github/workflows/*",
+     ".github/*",
+      "post_gen_resources/src/*",
+      "post_gen_resources/.venv",
+      "post_gen_resources/.setup_env",
+      ".*env",
+      ".idea/*"
+  ],
+    "_exclude_from_rc": [
+      "project_name",
+      "project_pkg",
+      "overwrite_repo",
+      "description"
+  ]
+}
