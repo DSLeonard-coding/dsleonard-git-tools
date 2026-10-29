@@ -1,0 +1,31 @@
+version = 1
+revision = 3
+requires-python = ">=3.10"
+
+[[package]]
+name = "dsleonard-git-tools"
+source = { editable = "." }
+dependencies = [
+    { name = "dsleonard-qx" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "sync-hook" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "dsleonard-qx", git = "https://github.com/DSLeonard-coding/qx.git" }]
+
+[package.metadata.requires-dev]
+dev = [{ name = "sync-hook", directory = "sync_hook" }]
+
+[[package]]
+name = "dsleonard-qx"
+version = "1.2.1.dev1+g7fb45741f"
+source = { git = "https://github.com/DSLeonard-coding/qx.git#7fb45741f6d83dc6c8cfb88ef868963d88931cbe" }
+
+[[package]]
+name = "sync-hook"
+version = "0.1.dev0"
+source = { directory = "sync_hook" }

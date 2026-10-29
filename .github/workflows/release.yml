@@ -1,0 +1,22 @@
+name: Release
+on:
+  push:
+    tags: [ 'v*' ]
+
+jobs:
+  update-tags:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Update version branches
+        run: |
+            git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
+            ./.github/scripts/update-version-branches.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          THIS_COMMIT: ${{ github.sha }}
+          THIS_TAG: ${{ github.ref_name }}

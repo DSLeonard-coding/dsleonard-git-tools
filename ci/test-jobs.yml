@@ -1,0 +1,36 @@
+test:
+  stage: test
+  image: continuumio/miniconda3
+  variables:
+    CONDA_PKGS_DIRS: "${CI_PROJECT_DIR}/.conda-pkgs"
+    PIP_CACHE_DIR: "${CI_PROJECT_DIR}/.pip-cache"
+  script:
+    - set -x
+    - |
+      source /opt/conda/etc/profile.d/conda.sh
+      firstcache=false
+      if [ ! -d .conda_envs/base ]; then
+        firstcache=true
+        conda create -y -p ./.conda_envs/base python=3.14
+        conda activate .conda_envs/base
+        echo "Installing dependencies..."
+        pip install -r requirements-dev.txt
+      else
+        conda activate .conda_envs/base
+      fi 
+      python3 run_tests.py
+      if [ "$firstcache" = "false" ] ; then
+        rm -rf .conda_envs
+        rm -rf .pip-cache
+      fi
+    # Runs tests and combines XML reports into reports.xml
+  artifacts:
+     reports:
+        junit: reports.xml   #the final combined report
+     when: always
+  cache:
+    key: "$CI_COMMIT_REF_SLUG"  # Cache key based on branch name
+    paths:
+      - .conda_envs/  # Cache Conda environments
+      - .pip-cache/  # Cache pip packages for faster installs
+  rules:
