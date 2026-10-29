@@ -1,0 +1,8 @@
+stages:
+  - build
+  #- test
+  - release
+
+include:
+  #- local: '/ci/test-jobs.yml'
+  - local: '/ci/deploy-jobs.yml'
