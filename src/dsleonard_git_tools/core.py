@@ -17,6 +17,8 @@ __all__=[
     'dsleonard_git_tools',
 ]
 
+__export_all__ = True
+
 #From bash, use export dsleonard_git_tools_DEBUG="True" to enable debug output
 _DEBUG: bool = False   # print commands called with qx commands
 if "dsleonard_git_tools_DEBUG" in os.environ:

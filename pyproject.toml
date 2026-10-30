@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dsleonard-git-tools"
-dynamic = ["version"] 
+dynamic = ["version"]
 requires-python = ">=3.10"
 description = "Tools for git and provisioning github/gitlab repos"
 readme = "README.md" 
@@ -47,6 +47,7 @@ dev = [
 sync-hook = { path = "./sync_hook"}
 dsleonard-qx = { git = "https://github.com/DSLeonard-coding/qx.git" }
 
+
 [project.urls]
 "Repository" = "https://github.com/DSLeonard-coding/dsleonard-git-tools"
 
@@ -60,6 +61,7 @@ exclude = [
     "tests"
 ]
 
+
 [tool.setuptools.package-data]
 "dsleonard_git_tools" = ["py.typed"]
 
@@ -67,17 +69,20 @@ exclude = [
 #The left side is the installed command name.  Right side is the entry point
 [project.scripts]
 dsl-create-remote = "dsleonard_git_tools.create_new_remote:main"
-dsleonard-git-tools = "dsleonard_git_tools.core:dsleonard_git_tools"
+#dsleonard-git-tools = "dsleonard_git_tools.core:dsleonard_git_tools"
 
 
 #enable scm dynamic versioning, version must be included in dynamic under project above. 
 [tool.setuptools_scm]
 write_to = "src/dsleonard_git_tools/_version.py"
+#fallback_version = "0.1.0.dev0"
 git_describe_command = "git describe --dirty --tags --long --match '*v[0-9]*'"
 #read tags like [prefix-]v1.3[.4[.5[...]]][rc0][-postfix]  only v1.3 part required
 #rc part is kept as a local metadata so v1.3rc0 satifies v1.3 in testing.
 #rc tags are not meant to be pushed to pypi.
 tag_regex = "^(?:(?P<pre>.*)-)?v(?P<version>[0-9.]+)(?:(?P<local>[a-z]+[0-9]*))?(-(?P<post>r[0-9]+))?.*$"
-[tool.uv.sources]
-dsleonard-qx = { git = "https://github.com/DSLeonard-coding/qx.git" }
 
+[tool.uv]
+#override-dependencies = ["dsleonard-git-tools @ file:///home/osboxes/repos/dsleonard-git-tools",
+#    "dsleonard-cc-rc-merge @ file:///home/osboxes/repos/dsleonard-cc-rc-merge"]
+#override-dependencies = ["dsleonard-qx @ file:///home/osboxes/repos/qx" ]

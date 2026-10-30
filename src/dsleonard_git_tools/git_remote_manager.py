@@ -29,6 +29,7 @@ __all__ = [
     "GitLabRemoteManager",
     "parse_git_remote"
 ]
+__export_all__ = True
 
 # Unified mapping for the "Big 4"
 # Key: (GitHub_Field, GitLab_Field, Transform_Func)
@@ -248,17 +249,6 @@ class RemoteManager:
             raise RuntimeError(f"Directory '{target_dir}' is not part of a git repository.")
         self._local_path = root_dir
 
-    def delete_repo(self):
-        try:
-            repo = self.get_remote_manager()
-            repo.delete()
-            msg(f"Remote repository {self._repo_full_name} deleted.")
-        except gitlab.exceptions.GitlabGetError as e:
-            if e.response_code == 404:
-                warn(f"Remote repository {self._repo_full_name} not found. Skipping deletion.")
-            else:
-                raise RuntimeError(f"Error deleting {self.repo_type} repository: {e}")
-
     def _get_remote_repo(self):
         """
         Abstract method to be implemented by subclasses.
@@ -266,7 +256,31 @@ class RemoteManager:
         """
         raise NotImplementedError("Subclasses must implement _get_remote_repo")
 
-    def create_remote_repo_if_allowed(self, remote_name="origin"):
+    def delete_repo(self):
+        """
+        Safely deletes the remote repository.
+        """
+        try:
+            existing_repo = self._get_remote_repo()
+            if existing_repo:
+                if self._repo_type == "gitlab":
+                    # python-gitlab requires deleting from its project manager
+                    gl = self.get_remote_manager()
+                    gl.projects.delete(existing_repo.id)
+                else:
+                    # PyGithub supports direct deletion
+                    existing_repo.delete()
+                msg(f"Remote repository {self._repo_full_name} deleted.")
+        except Exception as e:
+            # Handle standard 404/not found exceptions gracefully
+            if hasattr(e, 'response_code') and e.response_code == 404:
+                warn(f"Remote repository {self._repo_full_name} not found. Skipping deletion.")
+            elif "404" in str(e):
+                warn(f"Remote repository {self._repo_full_name} not found. Skipping deletion.")
+            else:
+                raise RuntimeError(f"Error deleting {self._repo_type} repository: {e}")
+
+    def create_remote_repo_if_allowed(self, remote_name="origin", dflt_branch ="master"):
         self.create_and_set_remote_manager()
 
         existing_remote_repo = None
@@ -282,7 +296,7 @@ class RemoteManager:
             else:
                 msg(f"Remote repo exists and overwrite is YES. Deleting {self._repo_full_name}...")
                 try:
-                    existing_remote_repo.delete()
+                    self.delete_repo()
                     # GitHub deletion is usually fast, but a small sleep avoids
                     # race conditions if you recreate immediately.
                     import time
@@ -290,12 +304,12 @@ class RemoteManager:
                 except Exception as e:
                     raise RuntimeError(f"Failed to delete existing GitHub repo: {e}\n")
 
-        self._repo = self._create_remote_repo()
+        self._repo = self._create_remote_repo(dflt_branch)
         msg(f"Setting remote origin to {self.git_url}")
         git(["-C", self._local_path, "remote", "remove", remote_name])
         git(["-C", self._local_path, "remote", "add", remote_name, self.git_url])
 
-    def _create_remote_repo(self):
+    def _create_remote_repo(self,default_branch = "master"):
         msg("Not implemented in base class")
         return None
 
@@ -559,7 +573,7 @@ class GitHubRemoteManager(RemoteManager):
             self._repo = self._remote_manager.get_repo(self._repo_full_name)
         return self._repo
 
-    def _create_remote_repo(self):
+    def _create_remote_repo(self, default_branch="ignored_here_for_github"):
         msg(f"Creating project in namespace :{self._repo_namespace}")
 
         # Explicitly resolving the Owner Type
@@ -702,11 +716,16 @@ class GitLabRemoteManager(RemoteManager):
         self._repo_type = "gitlab"
 
     def _get_remote_repo(self):
-        if not self._repo:
-            self._repo = self._remote_manager.get_project(self._repo_full_name)
-        return self._repo
+        try:
+            return self._remote_manager.projects.get(self._repo_full_name)
+        except gitlab.exceptions.GitlabGetError as e:
+            if e.response_code == 404:
+                return None
+            raise e
+        except AttributeError:
+            return None
 
-    def _create_remote_repo(self):
+    def _create_remote_repo(self, default_branch):
         # groups = g.groups.list(search=self._repo_namespace)
         msg(f"Creating project in namespace :{self._repo_namespace}")
         dbg(f"Auth: {self._remote_manager}")
@@ -716,6 +735,7 @@ class GitLabRemoteManager(RemoteManager):
                 'name': self._project_slug,
                 'namespace_id': ns.id,
                 'description': self._description,
+                'default_branch': default_branch,
                 'visibility': 'private'
             })
             git(f"-C {self._local_path} remote add origin {self.git_url}")
@@ -744,6 +764,19 @@ class GitLabRemoteManager(RemoteManager):
             msg("CI/CD variable GL_RELEASE_TOKEN created successfully.")
         except Exception as e:
             warn(f"Failed to setup GitLab Variables. Non-fatal error: {e}")
+
+    def apply_default_protections(self, dflt_branch):
+        if self._repo_type == "gitlab":
+            msg("Applying local protection matrices to remote orbit...")
+            default_protections = {
+                "branches": [
+                    {"name": dflt_branch, "merge_access_level": 40, "push_access_level": 40}
+                ],
+                "tags": [
+                    {"name": "v*", "create_access_level": 40}
+                ]
+            }
+            self.apply_gitlab_protections(default_protections)
 
     def apply_gitlab_protections(self, config_data):
         project = self._remote_manager.projects.get(self._repo_full_name)
