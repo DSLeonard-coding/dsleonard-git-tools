@@ -16,7 +16,7 @@ def get_default_shell():
     else:
         return "/bin/bash"
 
-def git(args: Union[str, List[str]], pretend: Optional[bool] = None, **kwargs) -> qx_out:
+def git(args: Union[str, List[str]], pretend: Optional[bool] = None, check: bool = True, **kwargs) -> qx_out:
     """  A custom git API :P :) by D.S. Leonard, based on qx command executor by same.
          args can either be a single space-separated string, for shell execution (with related quoting and escaping headaches)
               or can be a list used for system call execution.
@@ -27,11 +27,20 @@ def git(args: Union[str, List[str]], pretend: Optional[bool] = None, **kwargs) -
     """
     git_cmd: str = "git --no-pager"  # leading or trailing space with break things
     # ideally, this should be the only use of direct shell/process calls in the code:
+    cmd =""
     if type(args) is list:
-        return (qx(git_cmd.split(' ')+args, pretend=pretend))
+        cmd = git_cmd.split(' ')+args
     elif type(args) is str:  # mypy requires it explicit
-        return (qx(git_cmd+" "+args, pretend=pretend))
+        cmd = git_cmd + " " + args
     else:
         error("git():Shouldn't be here.")
         exit(1)  # silence mypy
-        
+
+    result = (qx(cmd, pretend=pretend))
+    if check and not result:
+        raise RuntimeError(
+            f"{git_cmd} returned non-zero exit code. Std error output follows: \n"
+            f"{result.stderr}\n"
+        )
+
+    return result
