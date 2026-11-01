@@ -728,7 +728,7 @@ class GitLabRemoteManager(RemoteManager):
 
     def _create_remote_repo(self, default_branch):
         # groups = g.groups.list(search=self._repo_namespace)
-        msg(f"Creating project in namespace :{self._repo_namespace}")
+        msg(f"Creating project in namespace :{self._repo_namespace} at {self.git_url}")
         dbg(f"Auth: {self._remote_manager}")
         ns = self._remote_manager.namespaces.get(self._repo_namespace)
         try:
@@ -743,7 +743,9 @@ class GitLabRemoteManager(RemoteManager):
             msg(f"Project created: {new_project.web_url}")
 
         except Exception as e:
-            raise RuntimeError(f"Failed to create remote GitLab project: {e}\n")
+            dbg(f"Exception occurred: {e}")
+            raise RuntimeError(f"Failed to create remote GitLab project.  \n"
+                               f"Host, namespace, or access token may be incorrect or mismatched. \n")
 
         return new_project
 
