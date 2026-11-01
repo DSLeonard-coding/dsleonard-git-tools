@@ -306,7 +306,7 @@ class RemoteManager:
 
         self._repo = self._create_remote_repo(dflt_branch)
         msg(f"Setting remote origin to {self.git_url}")
-        git(["-C", self._local_path, "remote", "remove", remote_name])
+        git(["-C", self._local_path, "remote", "remove", remote_name],check=False)
         git(["-C", self._local_path, "remote", "add", remote_name, self.git_url])
 
     def _create_remote_repo(self,default_branch = "master"):
