@@ -443,21 +443,26 @@ class RemoteManager:
         return retval
 
     def get_token_from_provider(self):
+        url = ""
+        match self._repo_type:
+            case "github":
+                scopes = "repo,delete_repo,write:org,admin:repo_hook,admin:public_key,workflow"
+                url =  f"https://github.com/settings/tokens/new?scopes={scopes}&description=dsl-pylaunch-key"
+
+            case "gitlab":
+                scopes = "api, read_user, write_repository, delete_repository"
+                url = f"https://{self._host}/-/user_settings/personal_access_tokens?name=Cookiecutter-pygit&scopes={scopes}"
+        webbrowser.open(url)
+        # OSC 8 hyperlink format: \033]8;;{url}\033\\{display_text}\033]8;;\033\\
+        link_text = url
+        clickable_url = f"\033]8;;{url}\033\\{link_text}\033]8;;\033\\"
+
         msg(f"Opening browser to create a Personal Access Token...")
+        print(f"If the web browser does not open, navigate to: \n    {clickable_url}\n")
         msg(f"You will be prompted to login to {self._repo_type} if not already logged in.")
         msg("To use CI/CD (auto major-version-tag updating, etc) set the expiration to the longest allowed")
         msg("Click the create button and then the copy icon next to the generated key to paste it here")
         msg("The cursor will not move when you paste the key. Just hit enter.")
-        match self._repo_type:
-            case "github":
-                scopes = "repo,delete_repo,write:org,admin:repo_hook,admin:public_key,workflow"
-                webbrowser.open(
-                    f"https://github.com/settings/tokens/new?scopes={scopes}&description=dsl-pylaunch-key"
-                )
-            case "gitlab":
-                scopes = "api, read_user, write_repository, delete_repository"
-                webbrowser.open(
-                    f"https://{self._host}/-/user_settings/personal_access_tokens?name=Cookiecutter-pygit&scopes={scopes}")
 
         self.set_token(getpass.getpass("Paste the generated GitHub PAT here (cursor will not move): "))
         self._save_token()
