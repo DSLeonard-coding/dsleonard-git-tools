@@ -36,7 +36,7 @@ def git(args: Union[str, List[str]], pretend: Optional[bool] = None, check: bool
         error("git():Shouldn't be here.")
         exit(1)  # silence mypy
 
-    result = (qx(cmd, pretend=pretend))
+    result = (qx(cmd, pretend=pretend, **kwargs))
     if check and not result:
         raise RuntimeError(
             f"{git_cmd} returned non-zero exit code. Std error output follows: \n"
